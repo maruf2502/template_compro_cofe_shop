@@ -6,7 +6,7 @@ export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   const mousePosition = useRef({ x: 0, y: 0 });
   const ringPosition = useRef({ x: 0, y: 0 });
 
