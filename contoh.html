@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KÖFI — Specialty Coffee House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-dark: #0a0604;
+  --bg-medium: #1a1009;
+  --bg-card: #1f150c;
+  --cream: #f5efe6;
+  --gold: #c8956c;
+  --gold-light: #e8b87e;
+  --brown: #8b6914;
+  --text-muted: #a08b74;
+  --text-light: #d4c4b0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) var(--bg-dark);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--cream);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* Custom Cursor */
+.cursor-dot {
+  width: 8px; height: 8px;
+  background: var(--gold-light);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.1s;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring {
+  width: 40px; height: 40px;
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  transition: all 0.15s ease-out;
+  mix-blend-mode: difference;
+}
+
+.cursor-ring.hover {
+  transform: scale(1.8);
+  border-color: var(--gold-light);
+  background: rgba(200, 149, 108, 0.1);
+}
+
+/* Grain Overlay */
+.grain {
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grainMove 0.5s steps(1) infinite;
+}
+
+@keyframes grainMove {
+  0% { transform: translate(0,0); }
+  10% { transform: translate(-5%,-10%); }
+  20% { transform: translate(-15%,5%); }
+  30% { transform: translate(7%,-15%); }
+  40% { transform: translate(-5%,15%); }
+  50% { transform: translate(-15%,10%); }
+  60% { transform: translate(15%,0%); }
+  70% { transform: translate(0%,15%); }
+  80% { transform: translate(-15%,5%); }
+  90% { transform: translate(10%,10%); }
+  100% { transform: translate(5%,-5%); }
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 24px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  mix-blend-mode: difference;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--cream);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold-light);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links a:hover::after { width: 100%; }
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 1001;
+  background: none; border: none;
+}
+
+.menu-toggle span {
+  width: 28px; height: 1.5px;
+  background: var(--cream);
+  transition: all 0.3s;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.mobile-menu.active { opacity: 1; pointer-events: all; }
+
+.mobile-menu a {
+  color: var(--cream);
+  text-decoration: none;
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s;
+}
+
+.mobile-menu.active a {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero Section */
+.hero {
+  height: 100vh;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 30px; height: 1px;
+  background: var(--gold);
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 6vw, 96px);
+  font-weight: 900;
+  line-height: 0.95;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s forwards;
+}
+
+.hero-title span {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.hero-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  max-width: 440px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 1s 0.7s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 1s 0.9s forwards;
+}
+
+.btn-primary {
+  padding: 16px 40px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+  text-decoration: none;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--cream);
+  transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+
+.btn-primary:hover::before { left: 0; }
+.btn-primary span { position: relative; z-index: 1; }
+
+.btn-outline {
+  padding: 16px 40px;
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(245,239,230,0.2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s;
+  text-decoration: none;
+}
+
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.hero-right {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7) saturate(0.9);
+}
+
+.hero-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg-dark) 0%, transparent 40%);
+}
+
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 80px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0;
+  animation: fadeUp 1s 1.2s forwards;
+}
+
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.3; transform: scaleY(0.6); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Marquee Section */
+.marquee-section {
+  padding: 60px 0;
+  border-top: 1px solid rgba(245,239,230,0.06);
+  border-bottom: 1px solid rgba(245,239,230,0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-track {
+  display: flex;
+  animation: marqueeScroll 25s linear infinite;
+  width: max-content;
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 0 40px;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 4vw, 64px);
+  font-weight: 700;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245,239,230,0.15);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.marquee-dot {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* About Section */
+.about {
+  padding: 160px 48px;
+  position: relative;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 48px;
+}
+
+.section-label::before {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--gold);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-image-wrapper {
+  position: relative;
+}
+
+.about-image-wrapper img {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  filter: saturate(0.8);
+}
+
+.about-image-frame {
+  position: absolute;
+  top: 20px; left: 20px;
+  right: -20px; bottom: -20px;
+  border: 1px solid var(--gold);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.about-floating-card {
+  position: absolute;
+  bottom: -40px; right: -40px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  padding: 32px;
+  max-width: 240px;
+}
+
+.about-floating-card .number {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.about-floating-card .label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.about-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 3.5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 32px;
+}
+
+.about-content h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.about-content p {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 1px solid rgba(245,239,230,0.08);
+}
+
+.stat-item .stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.stat-item .stat-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Menu Section */
+.menu {
+  padding: 160px 48px;
+  position: relative;
+  background: var(--bg-medium);
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 80px;
+}
+
+.menu-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 4vw, 72px);
+  font-weight: 700;
+}
+
+.menu-header h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.menu-tab {
+  padding: 12px 28px;
+  background: transparent;
+  border: 1px solid rgba(245,239,230,0.1);
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.menu-tab.active, .menu-tab:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg-dark);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.menu-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(245,239,230,0.04);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.menu-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(200,149,108,0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.menu-card-image {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  position: relative;
+}
+
+.menu-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: saturate(0.8);
+}
+
+.menu-card:hover .menu-card-image img {
+  transform: scale(1.08);
+}
+
+.menu-card-tag {
+  position: absolute;
+  top: 16px; left: 16px;
+  padding: 6px 14px;
+  background: rgba(10,6,4,0.7);
+  backdrop-filter: blur(10px);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(200,149,108,0.2);
+}
+
+.menu-card-body {
+  padding: 28px;
+}
+
+.menu-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.menu-card-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.menu-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-card-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.menu-card-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(245,239,230,0.1);
+  background: transparent;
+  color: var(--cream);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-card-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg-dark);
+}
+
+/* Process Section */
+.process {
+  padding: 160px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.process-header {
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.process-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 4vw, 72px);
+  font-weight: 700;
+}
+
+.process-header h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.process-header p {
+  max-width: 500px;
+  margin: 20px auto 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  position: relative;
+}
+
+.process-steps::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+.process-step {
+  text-align: center;
+  position: relative;
+}
+
+.process-icon {
+  width: 120px; height: 120px;
+  margin: 0 auto 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,149,108,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  position: relative;
+  background: var(--bg-dark);
+  transition: all 0.4s;
+}
+
+.process-step:hover .process-icon {
+  border-color: var(--gold);
+  background: rgba(200,149,108,0.08);
+  transform: scale(1.1);
+}
+
+.process-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.process-step h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.process-step p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+/* Gallery / Instagram Section */
+.gallery {
+  padding: 0;
+  position: relative;
+}
+
+.gallery-header {
+  padding: 120px 48px 60px;
+  text-align: center;
+}
+
+.gallery-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 3vw, 56px);
+  font-weight: 700;
+}
+
+.gallery-header h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 300px 300px;
+  gap: 4px;
+}
+
+.gallery-item {
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.gallery-item:nth-child(1) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: saturate(0.7);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+  filter: saturate(1);
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,6,4,0.8), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  display: flex;
+  align-items: flex-end;
+  padding: 24px;
+}
+
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+
+.gallery-overlay span {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Testimonials */
+.testimonials {
+  padding: 160px 48px;
+  background: var(--bg-medium);
+  position: relative;
+}
+
+.testimonials-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.testimonials-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 3vw, 56px);
+  font-weight: 700;
+}
+
+.testimonials-header h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(245,239,230,0.04);
+  padding: 40px;
+  position: relative;
+  transition: all 0.4s;
+}
+
+.testimonial-card:hover {
+  border-color: rgba(200,149,108,0.15);
+  transform: translateY(-4px);
+}
+
+.testimonial-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  color: var(--gold);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.testimonial-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-light);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.testimonial-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--bg-dark);
+}
+
+.testimonial-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.testimonial-role {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.testimonial-stars {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+/* Contact Section */
+.contact {
+  padding: 160px 48px;
+  position: relative;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+}
+
+.contact-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 3.5vw, 56px);
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.contact-info h2 em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.contact-info > p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 48px;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.contact-detail-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,149,108,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+
+.contact-detail-text .detail-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.contact-detail-text .detail-value {
+  font-size: 15px;
+  color: var(--cream);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 18px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(245,239,230,0.1);
+  color: var(--cream);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-bottom-color: var(--gold);
+}
+
+.form-group label {
+  position: absolute;
+  top: 18px; left: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.form-group input:focus ~ label,
+.form-group input:not(:placeholder-shown) ~ label,
+.form-group textarea:focus ~ label,
+.form-group textarea:not(:placeholder-shown) ~ label {
+  top: -8px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.form-group textarea {
+  resize: none;
+  height: 100px;
+}
+
+.form-submit {
+  align-self: flex-start;
+}
+
+/* Footer */
+.footer {
+  padding: 80px 48px 40px;
+  border-top: 1px solid rgba(245,239,230,0.06);
+  background: var(--bg-dark);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 80px;
+}
+
+.footer-brand .footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--cream);
+  margin-bottom: 20px;
+}
+
+.footer-brand p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  max-width: 320px;
+  margin-bottom: 24px;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-social {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(245,239,230,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.footer-social:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(200,149,108,0.08);
+}
+
+.footer-col h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 24px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-col a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.footer-col a:hover { color: var(--gold); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 40px;
+  border-top: 1px solid rgba(245,239,230,0.06);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Scroll Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Parallax Image */
+.parallax-img {
+  transition: transform 0.1s linear;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 0 48px; }
+  .hero-right { display: none; }
+  .about-grid { grid-template-columns: 1fr; gap: 60px; }
+  .about-image-wrapper img { height: 400px; }
+  .menu-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-steps { grid-template-columns: repeat(2, 1fr); }
+  .process-steps::before { display: none; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+  .gallery-item:nth-child(1) { grid-column: span 2; }
+  .gallery-item img { height: 250px; }
+  .testimonial-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .menu-toggle { display: flex; }
+  .hero-left { padding: 0 24px; }
+  .hero-scroll-indicator { left: 24px; }
+  .about, .menu, .process, .testimonials, .contact { padding: 100px 24px; }
+  .menu-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; gap: 48px; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .gallery-item:nth-child(1) { grid-column: span 1; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; gap: 40px; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .footer { padding: 60px 24px 30px; }
+  .menu-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .menu-tabs { flex-wrap: wrap; }
+  .about-floating-card { right: 0; bottom: -20px; }
+  .about-image-frame { display: none; }
+  .about-stats { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .cursor-dot, .cursor-ring { display: none; }
+  body { cursor: auto; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+}
+
+/* Smooth Loading */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+
+.loader.hidden { opacity: 0; visibility: hidden; }
+
+.loader-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--cream);
+}
+
+.loader-bar {
+  width: 120px;
+  height: 2px;
+  background: rgba(245,239,230,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-bar::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+  animation: loaderFill 1.5s ease-in-out forwards;
+}
+
+@keyframes loaderFill {
+  to { width: 100%; }
+}
+
+/* Floating Beans Animation */
+.floating-beans {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bean {
+  position: absolute;
+  font-size: 14px;
+  opacity: 0.06;
+  animation: floatBean linear infinite;
+}
+
+@keyframes floatBean {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-100px) rotate(720deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-text">KÖFI</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- Grain Overlay -->
+<div class="grain"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Floating Beans -->
+<div class="floating-beans" id="floatingBeans"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <a href="#" class="nav-logo">KÖFI</a>
+  <ul class="nav-links">
+    <li><a href="#about">Tentang</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#process">Proses</a></li>
+    <li><a href="#gallery">Galeri</a></li>
+    <li><a href="#contact">Kontak</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">Tentang</a>
+  <a href="#menu" onclick="closeMenu()">Menu</a>
+  <a href="#process" onclick="closeMenu()">Proses</a>
+  <a href="#gallery" onclick="closeMenu()">Galeri</a>
+  <a href="#contact" onclick="closeMenu()">Kontak</a>
+</div>
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-badge">Sejak 2018 — Specialty Coffee</div>
+    <h1 class="hero-title">
+      Seni Dalam
+      <span>Setiap Tegukan</span>
+    </h1>
+    <p class="hero-desc">
+      Kami menghadirkan pengalaman kopi specialty yang unik, dari biji pilihan petani lokal hingga secangkir kesempurnaan di tangan barista terbaik kami.
+    </p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary"><span>Jelajahi Menu</span></a>
+      <a href="#about" class="btn-outline">Cerita Kami</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/11474e396-0b02-43d5-a3fc-77fec5132844.png" alt="Coffee Shop Interior" class="parallax-img" data-speed="0.3">
+    <div class="hero-image-overlay"></div>
+  </div>
+  <div class="hero-scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">
+      <span class="marquee-text">Single Origin</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Hand Brewed</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Artisan Roast</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Premium Beans</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Craft Coffee</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Ethical Sourcing</span><span class="marquee-dot"></span>
+    </div>
+    <div class="marquee-item">
+      <span class="marquee-text">Single Origin</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Hand Brewed</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Artisan Roast</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Premium Beans</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Craft Coffee</span><span class="marquee-dot"></span>
+      <span class="marquee-text">Ethical Sourcing</span><span class="marquee-dot"></span>
+    </div>
+  </div>
+</div>
+
+<!-- About Section -->
+<section class="about" id="about">
+  <div class="section-label reveal">Cerita Kami</div>
+  <div class="about-grid">
+    <div class="about-image-wrapper reveal-left">
+      <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1fd4104a6-8345-4b6b-b388-b0dbfa92db98.png" alt="Coffee Beans">
+      <div class="about-image-frame"></div>
+      <div class="about-floating-card">
+        <div class="number">7+</div>
+        <div class="label">Tahun Pengalaman</div>
+      </div>
+    </div>
+    <div class="about-content reveal-right">
+      <h2>Lebih Dari Sekedar <em>Kedai Kopi</em></h2>
+      <p>
+        KÖFI lahir dari kecintaan mendalam terhadap kopi dan budaya yang mengelilinginya. Setiap biji yang kami sajikan memiliki cerita — dari petani di dataran tinggi Toraja, Gayo, hingga Kintamani.
+      </p>
+      <p>
+        Kami percaya bahwa kopi bukan hanya minuman, melainkan sebuah ritual. Ritual yang menghubungkan manusia, alam, dan kehangatan di setiap tegukannya.
+      </p>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-number" data-count="15">0</div>
+          <div class="stat-label">Origin Biji</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="50">0</div>
+          <div class="stat-label">Menu Varian</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="10">0</div>
+          <div class="stat-label">Barista Ahli</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Menu Section -->
+<section class="menu" id="menu">
+  <div class="menu-header">
+    <div>
+      <div class="section-label reveal">Menu Kami</div>
+      <h2 class="reveal">Racikan <em>Terbaik</em></h2>
+    </div>
+    <div class="menu-tabs reveal">
+      <button class="menu-tab active" data-filter="all">Semua</button>
+      <button class="menu-tab" data-filter="coffee">Kopi</button>
+      <button class="menu-tab" data-filter="noncoffee">Non-Kopi</button>
+      <button class="menu-tab" data-filter="food">Makanan</button>
+    </div>
+  </div>
+  <div class="menu-grid" id="menuGrid">
+    <!-- Cards will be injected by JS -->
+  </div>
+</section>
+
+<!-- Process Section -->
+<section class="process" id="process">
+  <div class="process-header">
+    <div class="section-label reveal" style="justify-content:center;">Proses Kami</div>
+    <h2 class="reveal">Dari Biji Hingga <em>Secangkir</em></h2>
+    <p class="reveal">Setiap tahapan dilakukan dengan penuh dedikasi untuk menghasilkan kopi berkualitas terbaik</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="process-icon">🌱</div>
+      <div class="process-number">01</div>
+      <h3>Petani Lokal</h3>
+      <p>Biji kopi dipilih langsung dari petani lokal terpercaya di berbagai daerah Indonesia</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-icon">🔥</div>
+      <div class="process-number">02</div>
+      <h3>Roasting</h3>
+      <p>Proses roasting artisan dengan kontrol suhu presisi untuk profil rasa optimal</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-icon">⚗️</div>
+      <div class="process-number">03</div>
+      <h3>Grinding</h3>
+      <p>Penggilingan fresh-to-order untuk menjaga aroma dan kesegaran biji kopi</p>
+    </div>
+    <div class="process-step reveal">
+      <div class="process-icon">☕</div>
+      <div class="process-number">04</div>
+      <h3>Brewing</h3>
+      <p>Disajikan oleh barista berpengalaman dengan teknik penyeduhan yang tepat</p>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header">
+    <div class="section-label reveal" style="justify-content:center;">Galeri</div>
+    <h2 class="reveal">Momen di <em>KÖFI</em></h2>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal">
+      <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/179e57e87-a962-42e0-8710-ec0a9637c2ea.png" alt="Cafe Interior">
+      <div class="gallery-overlay"><span>Interior Kami</span></div>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1c426a282-1a08-4cd4-995b-029bd0de72d6.png" alt="Latte Art">
+      <div class="gallery-overlay"><span>Latte Art</span></div>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1fd4104a6-8345-4b6b-b388-b0dbfa92db98.png" alt="Coffee Beans">
+      <div class="gallery-overlay"><span>Premium Beans</span></div>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/11474e396-0b02-43d5-a3fc-77fec5132844.png" alt="Espresso Machine">
+      <div class="gallery-overlay"><span>Our Equipment</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-header">
+    <div class="section-label reveal" style="justify-content:center;">Testimoni</div>
+    <h2 class="reveal">Kata <em>Mereka</em></h2>
+  </div>
+  <div class="testimonial-grid">
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">"</div>
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        Kopi terbaik yang pernah saya coba di Jakarta. V60 single origin Toraja-nya luar biasa — clean, fruity, dan sangat aromatic. Tempat yang perfect untuk working session.
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">A</div>
+        <div>
+          <div class="testimonial-name">Anindya Putri</div>
+          <div class="testimonial-role">Content Creator</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">"</div>
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        Suasana yang cozy dan intimate. Barista-nya sangat knowledgeable dan bisa recommend coffee sesuai selera. Croissant-nya juga juara! Pasti balik lagi.
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">R</div>
+        <div>
+          <div class="testimonial-name">Raka Mahendra</div>
+          <div class="testimonial-role">Software Engineer</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="testimonial-quote">"</div>
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        Sebagai pecinta kopi, KÖFI berhasil membuat saya jatuh cinta lagi dengan kopi Indonesia. Setiap visit selalu ada sesuatu yang baru untuk dicoba. Highly recommended!
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">S</div>
+        <div>
+          <div class="testimonial-name">Sarah Wijaya</div>
+          <div class="testimonial-role">Food Blogger</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+  <div class="contact-grid">
+    <div class="contact-info reveal-left">
+      <div class="section-label">Hubungi Kami</div>
+      <h2>Mari <em>Terhubung</em></h2>
+      <p>Kunjungi kami atau kirim pesan. Kami selalu senang mendengar dari Anda.</p>
+      <div class="contact-details">
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📍</div>
+          <div class="contact-detail-text">
+            <div class="detail-label">Alamat</div>
+            <div class="detail-value">Jl. Kemang Raya No. 45, Jakarta Selatan</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon"></div>
+          <div class="contact-detail-text">
+            <div class="detail-label">Jam Operasional</div>
+            <div class="detail-value">Sen - Min: 07:00 - 22:00 WIB</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📞</div>
+          <div class="contact-detail-text">
+            <div class="detail-label">Telepon</div>
+            <div class="detail-value">+62 21 7890 1234</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">✉️</div>
+          <div class="contact-detail-text">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">hello@kofi.id</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form class="contact-form reveal-right" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" placeholder=" " required>
+          <label>Nama Lengkap</label>
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder=" " required>
+          <label>Email</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" placeholder=" ">
+        <label>Subjek</label>
+      </div>
+      <div class="form-group">
+        <textarea placeholder=" " required></textarea>
+        <label>Pesan Anda</label>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn-primary"><span>Kirim Pesan</span></button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">KÖFI</div>
+      <p>Specialty coffee house yang menghadirkan pengalaman kopi terbaik dari biji pilihan petani lokal Indonesia.</p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social" aria-label="Instagram">IG</a>
+        <a href="#" class="footer-social" aria-label="Twitter">TW</a>
+        <a href="#" class="footer-social" aria-label="Facebook">FB</a>
+        <a href="#" class="footer-social" aria-label="TikTok">TK</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a href="#about">Tentang Kami</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#process">Proses</a></li>
+        <li><a href="#gallery">Galeri</a></li>
+        <li><a href="#contact">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Menu Populer</h4>
+      <ul>
+        <li><a href="#">V60 Pour Over</a></li>
+        <li><a href="#">Flat White</a></li>
+        <li><a href="#">AeroPress</a></li>
+        <li><a href="#">Cold Brew</a></li>
+        <li><a href="#">Affogato</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Informasi</h4>
+      <ul>
+        <li><a href="#">Karir</a></li>
+        <li><a href="#">Partnership</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 KÖFI. All rights reserved.</span>
+    <span>Crafted with ♥ & ☕</span>
+  </div>
+</footer>
+
+<script>
+// Menu Data
+const menuItems = [
+  {
+    name: 'V60 Pour Over',
+    desc: 'Single origin Toraja, notes of dark chocolate, citrus, and brown sugar',
+    price: 'Rp 45K',
+    category: 'coffee',
+    tag: 'Signature',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/11474e396-0b02-43d5-a3fc-77fec5132844.png'
+  },
+  {
+    name: 'Flat White',
+    desc: 'Double ristretto dengan steamed milk yang silky dan microfoam sempurna',
+    price: 'Rp 38K',
+    category: 'coffee',
+    tag: 'Bestseller',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1c426a282-1a08-4cd4-995b-029bd0de72d6.png'
+  },
+  {
+    name: 'Cold Brew Tonic',
+    desc: 'Cold brew 18 jam dicampur tonic water dan slice jeruk segar',
+    price: 'Rp 42K',
+    category: 'coffee',
+    tag: 'New',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1fd4104a6-8345-4b6b-b388-b0dbfa92db98.png'
+  },
+  {
+    name: 'Matcha Latte',
+    desc: 'Premium ceremonial grade matcha dari Uji, Kyoto dengan oat milk',
+    price: 'Rp 40K',
+    category: 'noncoffee',
+    tag: 'Popular',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/179e57e87-a962-42e0-8710-ec0a9637c2ea.png'
+  },
+  {
+    name: 'Croissant Almond',
+    desc: 'Butter croissant renyah dengan taburan almond slice dan honey glaze',
+    price: 'Rp 35K',
+    category: 'food',
+    tag: 'Fresh',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/179e57e87-a962-42e0-8710-ec0a9637c2ea.png'
+  },
+  {
+    name: 'AeroPress Gayo',
+    desc: 'Single origin Gayo Aceh, bold body dengan notes of tobacco and caramel',
+    price: 'Rp 48K',
+    category: 'coffee',
+    tag: 'Limited',
+    img: 'https://image.qwenlm.ai/public_source/03440135-0924-4818-b53b-0115e59777d4/1c426a282-1a08-4cd4-995b-029bd0de72d6.png'
+  }
+];
+
+// Render Menu
+function renderMenu(filter = 'all') {
+  const grid = document.getElementById('menuGrid');
+  const filtered = filter === 'all' ? menuItems : menuItems.filter(i => i.category === filter);
+
+  grid.innerHTML = filtered.map((item, idx) => `
+    <div class="menu-card reveal" style="transition-delay: ${idx * 0.1}s">
+      <div class="menu-card-image">
+        <img src="${item.img}" alt="${item.name}">
+        <div class="menu-card-tag">${item.tag}</div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">${item.name}</div>
+        <div class="menu-card-desc">${item.desc}</div>
+        <div class="menu-card-footer">
+          <div class="menu-card-price">${item.price}</div>
+          <button class="menu-card-btn" aria-label="Order ${item.name}">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Re-observe new elements
+  observeElements();
+}
+
+// Menu Tab Filter
+document.querySelectorAll('.menu-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderMenu(tab.dataset.filter);
+  });
+});
+
+// Initial render
+renderMenu();
+
+// Custom Cursor
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mouseX = 0, mouseY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  dot.style.left = mouseX - 4 + 'px';
+  dot.style.top = mouseY - 4 + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.15;
+  ringY += (mouseY - ringY) * 0.15;
+  ring.style.left = ringX - 20 + 'px';
+  ring.style.top = ringY - 20 + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// Cursor hover effect
+document.querySelectorAll('a, button, .menu-card, .gallery-item').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+
+// Loader
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 1800);
+});
+
+// Scroll Reveal
+function observeElements() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    if (!el.classList.contains('visible')) {
+      observer.observe(el);
+    }
+  });
+}
+
+observeElements();
+
+// Counter Animation
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.count);
+      let current = 0;
+      const increment = target / 60;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          el.textContent = target + '+';
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(current) + '+';
+        }
+      }, 25);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+// Mobile Menu
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+let menuOpen = false;
+
+menuToggle.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  mobileMenu.classList.toggle('active');
+  const spans = menuToggle.querySelectorAll('span');
+  if (menuOpen) {
+    spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+  } else {
+    spans[0].style.transform = '';
+    spans[1].style.opacity = '';
+    spans[2].style.transform = '';
+  }
+});
+
+function closeMenu() {
+  menuOpen = false;
+  mobileMenu.classList.remove('active');
+  const spans = menuToggle.querySelectorAll('span');
+  spans[0].style.transform = '';
+  spans[1].style.opacity = '';
+  spans[2].style.transform = '';
+}
+
+// Floating Beans
+const beansContainer = document.getElementById('floatingBeans');
+const beanSymbols = ['☕', '✦', '◆', '●'];
+for (let i = 0; i < 15; i++) {
+  const bean = document.createElement('div');
+  bean.classList.add('bean');
+  bean.textContent = beanSymbols[Math.floor(Math.random() * beanSymbols.length)];
+  bean.style.left = Math.random() * 100 + '%';
+  bean.style.fontSize = (Math.random() * 10 + 10) + 'px';
+  bean.style.animationDuration = (Math.random() * 20 + 20) + 's';
+  bean.style.animationDelay = (Math.random() * 20) + 's';
+  beansContainer.appendChild(bean);
+}
+
+// Parallax Effect
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  document.querySelectorAll('.parallax-img').forEach(img => {
+    const speed = parseFloat(img.dataset.speed) || 0.3;
+    img.style.transform = `translateY(${scrolled * speed}px)`;
+  });
+});
+
+// Form Submit
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.btn-primary span');
+  const originalText = btn.textContent;
+  btn.textContent = 'Terkirim ✓';
+  setTimeout(() => {
+    btn.textContent = originalText;
+    e.target.reset();
+  }, 2500);
+}
+
+// Navbar scroll effect
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  const currentScroll = window.pageYOffset;
+  if (currentScroll > 100) {
+    navbar.style.padding = '16px 48px';
+    navbar.style.background = 'rgba(10,6,4,0.9)';
+    navbar.style.backdropFilter = 'blur(20px)';
+    navbar.style.mixBlendMode = 'normal';
+  } else {
+    navbar.style.padding = '24px 48px';
+    navbar.style.background = 'transparent';
+    navbar.style.backdropFilter = 'none';
+    navbar.style.mixBlendMode = 'difference';
+  }
+  lastScroll = currentScroll;
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
+
